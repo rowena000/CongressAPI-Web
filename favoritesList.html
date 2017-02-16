@@ -1,0 +1,105 @@
+<h3 id="main-title">Favorites</h2>
+<hr />
+<div class="main-content" id="favorites">
+	<ul class="nav nav-tabs main-content-tabs" id="legislator-tab" role="tablist">
+		<li role="presentation" class="{{tab == 'legislators'? 'active' : 'dummy' }}">
+			<a href="#/favoritesList/legislators" id="legislators-tab" role="tab" data-toggle="tab" aria-controls="legislators" aria-expanded="true">Legislators</a>
+		</li>
+		<li role="presentation" class="{{tab == 'bills'? 'active' : 'dummy' }}">
+			<a href="#/favoritesList/bills" role="tab" id="bills-tab" data-toggle="tab" aria-controls="bills" aria-expanded="false">Bills</a>
+		</li>
+		<li role="presentation" class="{{tab == 'committees'? 'active' : 'dummy' }}">
+			<a href="#/favoritesList/committees" role="tab" id="committees-tab" data-toggle="tab" aria-controls="committees" aria-expanded="false">Committees</a>
+		</li>
+	</ul>
+	<div class="tab-content" id="table-content">
+		<div class="tab-pane fade active in" role="tabpanel" id="legislators" aria-labelledby="legislators-tab">
+			<div class="panel panel-default main-panels">
+				<div class="panel-heading">
+					{{panelHeader}}
+				</div>
+				<div class="panel-body">
+					<!-- table for fav legislators -->
+					<table class="table fixtable" ng-if="tab == 'legislators'">
+						<tr>
+							<th></th>
+							<th>Image</th>
+							<th>Party</th>
+							<th>Name</th>
+							<th>Chamber</th>
+							<th>State</th>
+							<th>Email</th>
+							<th></th>
+						</tr>
+						<tr dir-paginate="result in results | filter:queryLegislator |  itemsPerPage: 10">
+							<td><div class="btn btn-default" ng-click="removeFav('legislators', result)"><i class="fa fa-trash" aria-hidden="true"></i></div></td>
+							<td><img src="https://theunitedstates.io/images/congress/original/{{result.bioguide_id}}.jpg" style="width:40px; height:40px;"/></td>
+							<td><img src="{{result.party == 'R' ? 'r.png' : 'd.png'}}" style="width:30px; height:30px;"></td>
+							<td>{{result.last_name}}, {{result.first_name}}</td>
+							<td>{{result.chamber}}</td>
+							<td>{{result.state_name}}</td>
+							<td ng-if="result.oc_email != null"><a href="mailto:{{result.oc_email}}">{{result.oc_email}}</a></td>
+							<td ng-if="result.oc_email == null">N.A</td>
+							<td><a href="#/legislatorDetail/{{ result.bioguide_id }}" class="btn btn-primary">View Details</a></td>
+						</tr>
+					</table>
+					
+					<!-- table for fav bills -->
+					<table class="table fixtable" ng-if="tab == 'bills'">
+						<tr>
+							<th></th>
+							<th>Bill ID</th>
+							<th>Bill Type</th>
+							<th class="col-sm-3">Title</th>
+							<th>Chamber</th>
+							<th>Introduced On</th>
+							<th>Sponsor</th>
+							<th></th>
+							
+						</tr>
+						<tr dir-paginate="result in results | filter:queryBill |  itemsPerPage: 10">
+							<td><div class="btn btn-default" ng-click="removeFav('bills', result)"><i class="fa fa-trash" aria-hidden="true"></i></div></td>
+							<td>{{result.bill_id}}</td>
+							<td>{{result.bill_type}}</td>
+							<td>{{result.official_title}}</td>
+							<td>
+								<img src="{{result.chamber == 'house'? 'h.png' : 's.svg'}}" style="width:30px; height:30px;" />
+								{{result.chamber == 'house' ? 'House' : result.chamber == 'senate' ? 'Senate' : 'Joint'}}
+							</td>
+							<td>{{result.introduced_on}}</td>
+							<td>{{result.sponsor.title}}. {{result.sponsor.last_name}}, {{result.sponsor.first_name}}</td>
+							<td><a href="#/billsDetail/{{ result.bill_id }}" class="btn btn-primary">View Details</a></td>
+						</tr>
+					</table>
+					
+					<!-- table for fav committees -->
+					<table class="table fixtable" ng-if="tab == 'committees'">
+						<tr>
+							<th></th>
+							<th>Chamber</th>
+							<th>Committee ID</th>
+							<th class="col-sm-3">Name</th>
+							<th>Parent Committee</th>
+							<th>Sub Committee</th>
+							
+						</tr>
+						<tr dir-paginate="result in results | filter:queryCommittee |  itemsPerPage: 10">
+							<td><div class="btn btn-default" ng-click="removeFav('committees', result)"><i class="fa fa-trash" aria-hidden="true"></i></div></td>
+							<td>
+								<img src="{{result.chamber == 'house'? 'h.png' : 's.svg'}}" style="width:30px; height:30px;" />
+								{{result.chamber == 'house' ? 'House' : result.chamber == 'senate' ? 'Senate' : 'Joint'}}
+							</td>
+							<td>{{result.committee_id}}</td>
+							<td>{{result.name}}</td>
+							<td>{{result.subcommittee == true ? result.parent_committee_id : ''}}</td>
+							<td>{{result.subcommittee}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="tab-pagination">
+			<dir-pagination-controls></dir-pagination-controls>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,51 @@
+<html lang="en" ng-app="congressApp">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<title>Congress Information Search</title>
+		
+		<link href="index.css" rel="stylesheet" />
+		<!-- Latest compiled and minified CSS -->
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+		<link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+		
+	</head>
+	<body>
+		<nav class="navbar custom-nav">
+	      <div class="container-fluid nav-div-wrapper">
+	      	<div class="nav-fix">
+	         	<div id="menu-icon"><i class="fa fa-bars"></i></div>
+	        </div>
+	        <div class="nav-fluid">
+	        	<div id="nav-logo">
+	         	 <img src="logo.png" style="height:70%;"/><span style="font-size: 24; vertical-align: middle;"><b>Congress API</b></span>
+	         	 </div>
+	        </div>
+	      </div>
+	    </nav>
+
+    	<div class="custom-container">
+	    	<div class="menu">
+		        	<ul>
+		        		<a href="#/legislatorList/bystate"><li><i class="fa fa-user sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Legislators</span></li></a>
+		        		<a href="#/billsList/activeBill"><li><i class="fa fa-file-o sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Bills</span></li></a>
+		        		<a href="#/committeesList/house"><li><i class="fa fa-sign-in sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Committees</span></li></a>
+		        		<a href="#/favoritesList/legislators"><li><i class="fa fa-star  sidebar-icon" aria-hidden="true"></i><span class="sidebar-text">Favorites</span></li></a>
+		        	</ul>
+		     </div>
+		     <div class="main">
+		     	 <div ng-view></div>
+		     </div>    
+    	</div>
+    	
+    	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-route.js" ></script>
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    	<script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap.min.js"></script>
+    	<script src="dirPagination.js"></script>
+		<script src="index.js"></script>
+	
+	</body>
+</html>

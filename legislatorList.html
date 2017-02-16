@@ -1,0 +1,116 @@
+<h3 id="main-title">Legislators</h3>
+<hr />
+<div class="main-content" id="legislators">
+	<ul class="nav nav-tabs main-content-tabs" id="legislator-tab" role="tablist">
+		<li role="presentation" class="{{tab == 'bystate'? 'active' : 'dummy' }}">
+			<a href="#/legislatorList/bystate" id="state-tab" role="tab" data-toggle="tab" aria-controls="bystate" aria-expanded="true">By State</a>
+		</li>
+		<li role="presentation" class="{{tab == 'house'? 'active' : 'dummy' }}">
+			<a href="#/legislatorList/house" role="tab" id="house-tab" data-toggle="tab" aria-controls="house" aria-expanded="false">House</a>
+		</li>
+		<li role="presentation" class="{{tab == 'senate'? 'active' : 'dummy' }}">
+			<a href="#/legislatorList/senate" role="tab" id="senate-tab" data-toggle="tab" aria-controls="senate" aria-expanded="false">Senate</a>
+		</li>
+	</ul>
+	<div class="tab-content" id="table-content">
+		<div class="tab-pane fade active in" role="tabpanel" id="bystate" aria-labelledby="state-tab">
+			<div class="panel panel-default main-panels">
+				<div class="panel-heading">
+					<b>{{panelHeader}}</b>
+					
+					<select style="float:right; display: {{tab == 'bystate'? 'inline':'none'}}" class="form-control col-xs-3" id="stateSelect" ng-model="queryLegislator" >
+						<option value="" selected="">All States</option>
+						<option value="Alabama">Alabama</option>
+						<option value="Alaska">Alaska</option>
+						<option value="Arizona">Arizona</option>
+						<option value="Arkansas">Arkansas</option>
+						<option value="California">California</option>
+						<option value="Colorado">Colorado</option>
+						<option value="Connecticut">Connecticut</option>
+						<option value="Delaware">Delaware</option>
+						<option value="District Of Columbia">District Of Columbia</option>
+						<option value="Florida">Florida</option>
+						<option value="Georgia">Georgia</option>
+						<option value="Hawaii">Hawaii</option>
+						<option value="Idaho">Idaho</option>
+						<option value="Illinois">Illinois</option>
+						<option value="Indiana">Indiana</option>
+						<option value="Iowa">Iowa</option>
+						<option value="Kansas">Kansas</option>
+						<option value="Kentucky">Kentucky</option>
+						<option value="Louisiana">Louisiana</option>
+						<option value="Maine">Maine</option>
+						<option value="Maryland">Maryland</option>
+						<option value="Massachusetts">Massachusetts</option>
+						<option value="Michigan">Michigan</option>
+						<option value="Minnesota">Minnesota</option>
+						<option value="Mississippi">Mississippi</option>
+						<option value="Missouri">Missouri</option>
+						<option value="Montana">Montana</option>
+						<option value="Nebraska">Nebraska</option>
+						<option value="Nevada">Nevada</option>
+						<option value="New Hampshire">New Hampshire</option>
+						<option value="New Jersey">New Jersey</option>
+						<option value="New Mexico">New Mexico</option>
+						<option value="New York">New York</option>
+						<option value="North Carolina">North Carolina</option>
+						<option value="North Dakota">North Dakota</option>
+						<option value="Ohio">Ohio</option>
+						<option value="Oklahoma">Oklahoma</option>
+						<option value="Oregon">Oregon</option>
+						<option value="Pennsylvania">Pennsylvania</option>
+						<option value="Rhode Island">Rhode Island</option>
+						<option value="South Carolina">South Carolina</option>
+						<option value="South Dakota">South Dakota</option>
+						<option value="Tennessee">Tennessee</option>
+						<option value="Texas">Texas</option>
+						<option value="Utah">Utah</option>
+						<option value="Vermont">Vermont</option>
+						<option value="Virginia">Virginia</option>
+						<option value="Washington">Washington</option>
+						<option value="West Virginia">West Virginia</option>
+						<option value="Wisconsin">Wisconsin</option>
+						<option value="Wyoming">Wyoming</option>
+					</select>
+					<input ng-model="queryLegislator" style="float:right; display: {{tab != 'bystate'? 'inline':'none'}}" placeholder="Search">
+					
+				</div>
+				<div class="panel-body">
+					<table class="table">
+						<tr>
+							<th>Party</th>
+							<th>Name</th>
+							<th>Chamber</th>
+							<th>District</th>
+							<th>State</th>
+							<th></th>
+						</tr>
+						<tr dir-paginate="result in results | filter:queryLegislator |  itemsPerPage: 10">
+							<td>
+								<img src="{{result.party == 'R' ? 'r.png' : result.party == 'D' ? 'd.png' : 'i.png'}}" style="width:30px; height:30px">
+							</td>
+							<td>{{result.first_name}} {{result.last_name}}</td>
+							<td>
+								<img src="{{result.chamber == 'house'? 'h.png' : 's.svg'}}" style="width:30px; height:30px;" />
+								{{result.chamber == 'house' ? 'House' : 'Senate'}}
+								</td>
+							<td>{{result.district == null? 'N/A' : 'District' + result.district }}</td>
+							<td>{{result.state_name}}</td>
+							<td><a href="#/legislatorDetail/{{ result.bioguide_id }}" class="btn btn-primary">View Details</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<!-- <div class="tab-pane fade" role="tabpanel" id="house" aria-labelledby="house-tab">
+			house
+		</div>
+		<div class="tab-pane fade" role="tabpanel" id="senate" aria-labelledby="senate-tab">
+			senate
+		</div> -->
+
+		<div class="tab-pagination">
+			<dir-pagination-controls></dir-pagination-controls>
+		</div>
+	</div>
+</div>
