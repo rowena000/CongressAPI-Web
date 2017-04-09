@@ -1,8 +1,19 @@
 
 /** toggle sidebar menu **/
+var showNav = true;
 $("#menu-icon").click(function(){
 	$(".menu").animate({width:'toggle'}, 350);
-	$(".main").css("width: 100%");
+	// $(".main").css("margin-left", "0px");
+	if (showNav) {
+		// $('.main').animate({
+	    	// marginLeft: '0px'
+		// }, 300);
+		$('.main').removeClass('nav-show').addClass('nav-hide');
+		showNav = false;
+	} else {
+		$('.main').removeClass('nav-hide').addClass('nav-show');
+		showNav = true;
+	}
 });
 
 /** swith tabs **/
@@ -12,16 +23,13 @@ $("#menu-icon").click(function(){
 });  
 
 /** angular js **/
-var app = angular.module('congressApp', ['angularUtils.directives.dirPagination', 'ngRoute']).config(function ($routeProvider){
-	$routeProvider.when('/legislatorList/:tab/', {
-		templateUrl: 'legislatorList.html',
-        controller: 'legislatorsCtrl'
-    }).when('/legislatorList/:tab/?query=:query', {
+var app = angular.module('congressApp', ['angularUtils.directives.dirPagination', 'ngRoute', 'ngAnimate']).config(function ($routeProvider){
+	$routeProvider.when('/legislatorList/', {
 		templateUrl: 'legislatorList.html',
         controller: 'legislatorsCtrl'
     }).when('/legislatorDetail/:id/', {
 		templateUrl: 'legislatorDetail.html',
-		controller: 'legislatorsDetailCtrl'
+		controller: 'legislatorsDetailCtrl',
 	}).when('/billsList/:tab/', {
         templateUrl: 'billsList.html',
         controller: 'billsCtrl'
@@ -36,28 +44,39 @@ var app = angular.module('congressApp', ['angularUtils.directives.dirPagination'
         controller: 'favoritesCtrl'
     }).when('favoritesList', {
     	redirectTo: '/favoritesList/legislators'
+    }).when('/', {
+    	redirectTo: '/legislatorList/'
     });
 });
 
-var legislatorList = [];
+var legislatorList = null;
 
-app.controller('legislatorsCtrl', function($scope, $location, $routeParams, $http) {
+app.controller('legislatorsCtrl', function($scope, $location, $routeParams, $http, $rootScope) {
 	var tab = $routeParams.tab;
 	var requrl = "http://congressinformation.hwpssmc2mf.us-west-2.elasticbeanstalk.com/?congressdb=legislators";
+	$scope.pageClass = "page-list";
+	$rootScope.pageTitle = "Legislators";
 	
+	$rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
+		$rootScope.animation = currRoute.animation;
+	});
+	  
     $scope.tab = tab;
-    if (tab == "bystate") {
-    	$scope.panelHeader = "Legislators By State";
-    } else if (tab == "senate") {
+    if (tab == "senate") {
     	$scope.panelHeader = "Legislators By Senate";
-    	requrl =  requrl + "&chamber=senate";
+    	$scope.queryChamber = tab;
+    	// requrl =  requrl + "&chamber=senate";
     } else if (tab == "house") {
     	$scope.panelHeader = "Legislators By House";
-    	requrl = requrl + "&chamber=house";
+    	$scope.queryChamber = tab;
+    	// requrl = requrl + "&chamber=house";
+    } else {
+    	$scope.panelHeader = "Legislators By State";
+    	$scope.tab = "bystate";
     }
-
-    if (legislatorList[tab] != null) {
-    	$scope.results = legislatorList[tab];
+  
+    if (legislatorList != null) {
+    	$scope.results = legislatorList;
     } else {
     	$http({
 		    method : "GET",
@@ -65,7 +84,7 @@ app.controller('legislatorsCtrl', function($scope, $location, $routeParams, $htt
 		}).then(function mySucces(response) {
 			// debugger;
 		    $scope.results = response.data.results;
-		    legislatorList[tab] = response.data.results;
+		    legislatorList = response.data.results;
 		}, function myError(response) {
 		        $scope.results = response.statusText;
 		});
@@ -73,24 +92,51 @@ app.controller('legislatorsCtrl', function($scope, $location, $routeParams, $htt
     
     $scope.param = $routeParams.query;
     if ($scope.param) {
-    	$scope.queryLegislator = $scope.param;
+    	$scope.queryLegislator =  $scope.param;
     }
     
-    $scope.$watch('queryLegislator', function(state) {
-    	console.log(state);
-    	$location.search('query', state);
-    });
-
+    // if ($routeParams.queryState) {
+    	// $scope.queryState = $routeParams.queryState;
+    // }
     
+    // $scope.$watch('queryLegislator', function(state) {
+    	// $location.search('query', state);
+    // });
+
+	$scope.navigateTab = function(tabName) { 
+		$scope.queryLegislator = "";
+    	$scope.queryChamber = tabName;
+    	$scope.tab = tabName;
+    	if (tabName == "senate") {
+    		$scope.panelHeader = "Legislators By Senate";
+    	} else if (tabName == "house") {
+    		$scope.panelHeader = "Legislators By House";
+    	} else {
+    		$scope.panelHeader = "Legislators By State";
+    		$scope.tab = 'bystate';
+    	}
+    };
+    
+    $scope.goToDetails = function(obj) {
+    	// console.log(obj.bioguide_id);
+    	$rootScope.legiDetailObj = obj;
+    };
+//     
+    // $scope.showFilter = function(result) {
+    	// debugger;
+        // return result.last_name = $scope.queryLegislator;
+    // };
 });
 
-app.controller('legislatorsDetailCtrl', function ($scope, $location, $routeParams, $http) {
+app.controller('legislatorsDetailCtrl', function ($scope, $location, $routeParams, $http, $rootScope) {
+	$scope.pageClass = "page-detail";
+	$rootScope.pageTitle = "Legislators";
     var guid = $routeParams.id;
     $scope.back = function () {
     	var ftab = $scope.fromtab;
     	var fq = $scope.query;
         // $location.path('/legislatorList/' + ftab +'/?query=' + fq);
-        $location.path('/legislatorList/' + ftab +'/');
+        $location.path('/legislatorList/');
     };
     
     $scope.fromtab = $routeParams.from;
@@ -114,22 +160,32 @@ app.controller('legislatorsDetailCtrl', function ($scope, $location, $routeParam
    	} else {
    		$scope.isFav = true;
    	}
-    
-    //firt, get legislator personal information
-    //  from http://localhost/congressapi.php?congressdb=legislators&bioguide_id=S001197
     var requrl = "http://congressinformation.hwpssmc2mf.us-west-2.elasticbeanstalk.com/?congressdb=legislators&bioguide_id=" + guid;
-    $http({
-		    method : "GET",
-		    url : requrl
-		}).then(function mySucces(response) {
-		    $scope.pInfo  = response.data.results[0];
-		    var obj = response.data.results[0];
-		    var startDate = new Date(obj.term_start);
-			var endDate = new Date(obj.term_end);
-			var currDate = new Date();
-			var number = (currDate.getTime() - startDate.getTime()) * 100/(endDate.getTime() - startDate.getTime());
-			$scope.progress = parseInt(number);
-		});
+    var cachedObj = $rootScope.legiDetailObj;
+    if (cachedObj != null && cachedObj.bioguide_id == guid) {
+    	$scope.pInfo = cachedObj;
+    	var startDate = new Date(cachedObj.term_start);
+		var endDate = new Date(cachedObj.term_end);
+		var currDate = new Date();
+		var number = (currDate.getTime() - startDate.getTime()) * 100/(endDate.getTime() - startDate.getTime());
+		$scope.progress = parseInt(number);
+    } else {
+	    //firt, get legislator personal information
+	    //  from http://localhost/congressapi.php?congressdb=legislators&bioguide_id=S001197
+	   
+	    $http({
+			    method : "GET",
+			    url : requrl
+			}).then(function mySucces(response) {
+			    $scope.pInfo  = response.data.results[0];
+			    var obj = response.data.results[0];
+			    var startDate = new Date(obj.term_start);
+				var endDate = new Date(obj.term_end);
+				var currDate = new Date();
+				var number = (currDate.getTime() - startDate.getTime()) * 100/(endDate.getTime() - startDate.getTime());
+				$scope.progress = parseInt(number);
+			});
+	}
     
     // second, get top 5 committees
     	// from http://localhost/congressapi.php?congressdb=committees&member_id=S001197
@@ -153,7 +209,13 @@ app.controller('legislatorsDetailCtrl', function ($scope, $location, $routeParam
 });
 
 var billList = [];
-app.controller('billsCtrl', function ($scope, $location, $routeParams, $http) {
+app.controller('billsCtrl', function ($scope, $location, $routeParams, $http, $rootScope) {
+	var search = $routeParams.search;
+	if (search) {
+		$scope.queryBill = search;
+	}
+	$scope.pageClass = "page-list";
+	$rootScope.pageTitle = "Bills";
 	var tab = $routeParams.tab;
 	var requrl = "http://congressinformation.hwpssmc2mf.us-west-2.elasticbeanstalk.com/?congressdb=bills";
 	
@@ -180,12 +242,21 @@ app.controller('billsCtrl', function ($scope, $location, $routeParams, $http) {
 		        $scope.results = response.statusText;
 		});
     }
+    
+    $scope.goToBillDetails = function(obj) {
+    	// console.log(obj.bioguide_id);
+    	$rootScope.billDetailObj = obj;
+    };
 });
 
-app.controller('billsDetailCtrl', function ($scope, $location, $routeParams, $http) {
+app.controller('billsDetailCtrl', function ($scope, $location, $routeParams, $http, $rootScope) {
+	var tab = $routeParams.from;
+	var search = $routeParams.search;
+	$scope.pageClass = "page-detail";
+	$rootScope.pageTitle = "Bills";
     var bill_id = $routeParams.billId;
     $scope.back = function () {
-        $location.path('/billsList/activeBill');
+        $location.path('/billsList/' + tab).search('search', search);
     };
     
     $scope.addToFav = function(congressdb, obj) { 	
@@ -205,20 +276,26 @@ app.controller('billsDetailCtrl', function ($scope, $location, $routeParams, $ht
    	}
     
     var requrl = "http://congressinformation.hwpssmc2mf.us-west-2.elasticbeanstalk.com/?congressdb=bills&bill_id=" + bill_id;
-    $http({
-		    method : "GET",
-		    url : requrl
-		}).then(function mySucces(response, $http) {
-		    $scope.result  = response.data.results[0];
-		}, function myError(response) {
-		        $scope.result = response.statusText;
-		});
-	
+    
+    var cachedObj = $rootScope.billDetailObj;
+    if (cachedObj != null && cachedObj.bill_id == bill_id) {
+    	$scope.result = cachedObj;
+    } else {
+	    $http({
+			    method : "GET",
+			    url : requrl
+			}).then(function mySucces(response, $http) {
+			    $scope.result  = response.data.results[0];
+			}, function myError(response) {
+			        $scope.result = response.statusText;
+			});
+	}
 });
 
 
 
-app.controller('committeesCtrl', function ($scope, $location, $routeParams, $http) {
+app.controller('committeesCtrl', function ($scope, $location, $routeParams, $http, $rootScope) {
+	$rootScope.pageTitle = "Committees";
 	var tab = $routeParams.tab;
 	var requrl = "http://congressinformation.hwpssmc2mf.us-west-2.elasticbeanstalk.com/?congressdb=committees";
 	if (tab == 'house') {
@@ -263,13 +340,24 @@ app.controller('committeesCtrl', function ($scope, $location, $routeParams, $htt
 	
 });
 
-app.controller('favoritesCtrl', function ($scope, $location, $routeParams, $http) {
+app.controller('favoritesCtrl', function ($scope, $location, $routeParams, $http, $rootScope) {
+	$rootScope.pageTitle = "Favorites";
 	var tab = $routeParams.tab;
 	
 	$scope.removeFav = function(congressdb, result) {
 		removeFav(congressdb, result);
 		$scope.results.splice($scope.results.indexOf(result), 1);
 	};
+	
+	$scope.goToDetails = function(obj) {
+    	// console.log(obj.bioguide_id);
+    	$rootScope.legiDetailObj = obj;
+    };
+    
+    $scope.goToBillDetails = function(obj) {
+    	// console.log(obj.bioguide_id);
+    	$rootScope.billDetailObj = obj;
+    };
 	
 	var results = [];
 	if (tab == 'legislators') {
@@ -308,6 +396,9 @@ function addToFav(congressdb, obj) {
 	} else if (congressdb == 'bills') {
 		id = 'bill-' + obj.bill_id;
 	}
+	var currDate = new Date();
+	obj['added_date'] = currDate;
+	
 	var elem = document.getElementById(id);
 	elem.classList.add('fav-icon-active'); 
 	localStorage.setItem(id, JSON.stringify(obj));

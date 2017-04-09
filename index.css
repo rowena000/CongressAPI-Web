@@ -1,7 +1,10 @@
 * {
     box-sizing: border-box;
-    
 }
+
+/**:not(.fa) {
+	font-family: 'Ek Mukta', sans-serif;
+}*/
 
 /** navigation **/
 .custom-nav {
@@ -32,15 +35,33 @@
 	}
 	
 	#nav-logo {
-		margin: auto;
+		margin: 5px auto;
 		display: block;
-		text-align: center;
+		text-align:center;
+	}
+	
+	#nav-logo img {
+		margin-top: -10px;
+		height: 20px;
 	}
 	
 	.navbar-header {
 		width: 100%;
 	}
 
+	.nav-show {
+		margin-left: 40px;
+	}
+	
+	.nav-hide {
+		margin-left: 0px !important;
+	}
+	
+	#logo-text {
+		font-weight: 700;
+		font-size: 1.5em;
+	}
+	
 /** main body**/ 
 .custom-container {
 	width: 100%;
@@ -48,7 +69,7 @@
 }	
 	
 .menu {
-    width: 50px;
+    width: 40px;
     float: left;
     background-color: #333;
 	height: 100%;
@@ -63,15 +84,17 @@
     height: 100%;
     /*margin: 0 -50px 0 auto;*/
     background-color: #f8f8f8;
-    margin-left: 50px;
+    margin-left: 40px;
     /*margin-top: 40px;*/
     padding-top: 5px;
+    min-width: 332px;
+    overflow: scroll !important;
 }
 
 .menu ul {
     list-style-type: none;
     margin: 0;
-    padding-left: 5px;
+    padding-left: 2px;
     padding-top:  15px;
     position: relative;
 }
@@ -82,16 +105,17 @@
 		cursor: pointer;
 	}
 
-	.menu a {
+	.menu a, .menu a:visited {
 		text-decoration: none;
 		color: #FFFFFF !important;
 	}
 	
-	.menu a:hover {
+	.menu a:hover, .menu a:active {
 		text-decoration: none;
 		color: #FFFFFF !important;
 		font-weight: bold;
 	}
+	
 	
 .sidebar-text {
 	display: none;
@@ -116,10 +140,12 @@
 .main-panels {
 	margin: 15px;
 	/*max-height: 600px !important;*/
-	overflow: hidden;
+	overflow: auto;
 }
 
+	
 @media only screen and (min-width: 768px) {
+
 	.menu {
 	    width: 150px;
 	}
@@ -138,6 +164,18 @@
 	.sidebar-icon {
 		font-size: 1em !important;
 	}
+	
+	.nav-show {
+		margin-left: 150px;
+	}
+	
+	.table {
+		font-size: 1em !important;
+	}
+	
+	.largescreen {
+		display: table-cell;
+	}
 }
 
 
@@ -147,11 +185,13 @@
 }	
 
 
-#stateSelect {
+#stateSelect, #inputState, .search-input {
     display: inline-block;
     width: auto;
     vertical-align: middle;
+    width: 150px !important;
 }
+
 
 .fav-icon {
 	color: white;
@@ -174,12 +214,102 @@
 .fixtable {
 	table-layout: fixed; 
 	word-wrap: break-word;
-}
-
-.table {
-	font-size: 1em !important;
+	overflow: scroll;
 }
 
 .panel-heading {
-	height: 55px;
+	height: 50px;
 }
+
+	.panel-heading-left, .panel-heading-right {
+		width: 50%; 
+		float:left; 
+		display: inline; 
+		word-wrap: break-word;
+		text-overflow: clip;
+	}
+	
+	.panel-heading-left {
+		padding-right: 45px;
+		font-weight: 700;
+	}
+
+#main-title {
+	margin-left: 15px;
+}
+
+.main hr {
+	margin: 15px;
+}
+
+
+.legislator-img {
+	/*width: 100%;*/
+	max-height: 200px;
+	margin-bottom: 15px;
+}
+
+@media only screen and (max-width: 768px) {
+	.largescreen {
+		display: none !important;
+	}
+}
+
+
+.favlist table {
+	min-width: 600px;
+}
+
+.btn-removefav:hover {
+	color: red !important;
+}
+
+/** page animation **/
+
+/* slide in from the right */
+@keyframes slideInRight {
+	from 	{ transform:translateX(100%); }
+	to 		{ transform: translateX(0); }
+}
+@-moz-keyframes slideInRight {
+	from 	{ -moz-transform:translateX(100%); }
+	to 		{ -moz-transform: translateX(0); }
+}
+@-webkit-keyframes slideInRight {
+	from 	{ -webkit-transform:translateX(100%); }
+	to 		{ -webkit-transform: translateX(0); }
+}
+
+/* slide in from the bottom */
+@keyframes slideOutLeft {
+	to 		{ transform: translateX(100%); }
+}
+@-moz-keyframes slideOutLeft {	
+	to 		{ -moz-transform: translateX(100%); }
+}
+@-webkit-keyframes slideOutLeft {
+	to 		{ -webkit-transform: translateX(100%); }
+}
+
+/* slide in from the bottom */
+@keyframes slideOutRight {
+	to 		{ transform: translateX(0%); }
+}
+
+.page.ng-leave 	{ z-index:9999; }
+.page.ng-enter 	{ z-index:8888; }
+
+.page-detail.ng-leave        {
+    -webkit-animation:slideOutLeft 0.5s both ease-in;
+	-moz-animation:slideOutLeft 0.5s both ease-in;
+	animation:slideOutLeft 0.5s both ease-in;   
+}
+.page-detail.ng-enter 		{  
+    -webkit-animation:slideInRight 0.5s both ease-in;
+	-moz-animation:slideInRight 0.5s both ease-in;
+	animation:slideInRight 0.5s both ease-in;    
+}
+
+
+
+
